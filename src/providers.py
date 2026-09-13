@@ -35,29 +35,41 @@ class MockOfflineProvider(BaseLLMProvider):
         return f"[Mock Chatbot Response]: Xin chào! Tôi đã nhận được câu hỏi '{prompt}'. (Chế độ Chatbot không có Tool tra cứu dữ liệu thời gian thực)."
 
     def generate_with_tools(self, prompt: str, tools_schema: List[Dict[str, Any]], system_prompt: str = "") -> Dict[str, Any]:
+        import re
         prompt_lower = prompt.lower()
-        
-        # Mô phỏng nhận diện intent gọi Tool
-        if "sv2026001" in prompt_lower and "đặt lịch" in prompt_lower:
+
+        # Intent: Gia han sach
+        if ("gia han" in prompt_lower or "renew" in prompt_lower) and ("mem-" in prompt_lower or "lib-" in prompt_lower):
+            mem_match = re.search(r"mem-\d+", prompt_lower)
+            lib_match = re.search(r"lib-\d+", prompt_lower)
+            member_id = mem_match.group(0).upper() if mem_match else "MEM-001"
+            book_id   = lib_match.group(0).upper()  if lib_match  else "LIB-002"
             return {
                 "type": "tool_call",
-                "tool_name": "schedule_appointment",
-                "arguments": {"student_id": "SV2026001", "datetime_str": "14:00 15/09/2026", "advisor_name": "PGS.TS Nguyễn Văn A"},
-                "thought": "Người dùng yêu cầu đặt lịch hẹn tư vấn cho sinh viên SV2026001. Tôi sẽ gọi tool schedule_appointment."
+                "tool_name": "renew_book",
+                "arguments": {"member_id": member_id, "book_id": book_id, "days": 14},
+                "thought": f"Nguoi dung yeu cau gia han sach {book_id} cho thanh vien {member_id}. Goi tool renew_book."
             }
-        elif "sv2026001" in prompt_lower or "tra cứu" in prompt_lower:
+
+        # Intent: Tra cuu sach
+        elif "lib-" in prompt_lower or "tra cuu" in prompt_lower or "tra cứu" in prompt_lower or "tim sach" in prompt_lower or "sach" in prompt_lower:
+            lib_match = re.search(r"lib-\d+", prompt_lower)
+            book_id = lib_match.group(0).upper() if lib_match else "LIB-001"
             return {
                 "type": "tool_call",
-                "tool_name": "academic_query",
-                "arguments": {"student_id": "SV2026001"},
-                "thought": "Người dùng muốn tra cứu thông tin học vụ của sinh viên SV2026001. Tôi sẽ gọi tool academic_query."
+                "tool_name": "search_book",
+                "arguments": {"book_id": book_id},
+                "thought": f"Nguoi dung muon tra cuu sach {book_id}. Goi tool search_book."
             }
+
+        # Intent: Cau hoi chung
         else:
             return {
                 "type": "text",
-                "content": f"[Mock Agent Response]: Xin chào! Quy chế học vụ VinUni yêu cầu sinh viên tích lũy tối thiểu 120 tín chỉ và duy trì GPA trên 2.0 để tốt nghiệp.",
-                "thought": "Câu hỏi chung về quy chế học vụ, trả lời trực tiếp không cần gọi Tool."
+                "content": "[Library Agent]: Thu vien VinUni mo cua tu 7:00-22:00 hang ngay. Moi sinh vien duoc muon toi da 5 cuon/30 ngay. Co the gia han them 14 ngay neu sach chua co nguoi dat truoc.",
+                "thought": "Cau hoi chung ve thu vien, tra loi thang khong can goi Tool."
             }
+
 
 
 class GeminiProvider(BaseLLMProvider):

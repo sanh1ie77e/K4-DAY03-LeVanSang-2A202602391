@@ -121,17 +121,23 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPAcademicServer) ->
                 if obs_data.get("status") == "SUCCESS":
                     if "data" in obs_data:
                         d = obs_data["data"]
-                        final_answer = (
-                            f"Kết quả tra cứu cho sinh viên {obs_data.get('student_id', '')} ({d.get('full_name', '')}): "
-                            f"Lớp {d.get('class', '')}, GPA: {d.get('gpa', '')}, Email: {d.get('email', '')}, "
-                            f"Trạng thái: {d.get('status', '')}, Cố vấn: {d.get('advisor', '')}."
-                        )
+                        # Format cho search_book
+                        if "title" in d:
+                            final_answer = (
+                                f"Sach [{obs_data.get('book_id', '')}] — {d.get('title', '')}: "
+                                f"Tac gia: {d.get('author', '')}, Vi tri: {d.get('shelf_location', '')}, "
+                                f"Tinh trang: {d.get('status', '')}, "
+                                f"So ban co san: {d.get('available_copies', '')}/{d.get('total_copies', '')}."
+                                + (f" Han tra: {d.get('due_date', '')}." if d.get('due_date') else "")
+                            )
+                        else:
+                            final_answer = f"Ket qua: {json.dumps(d, ensure_ascii=False)}"
                     elif "message" in obs_data:
                         final_answer = obs_data["message"]
                     else:
-                        final_answer = f"Đã hoàn tất xử lý qua MCP Server: {json.dumps(obs_data, ensure_ascii=False)}"
+                        final_answer = f"Da hoan tat xu ly qua MCP Server: {json.dumps(obs_data, ensure_ascii=False)}"
                 elif obs_data.get("status") == "NOT_FOUND":
-                    final_answer = obs_data.get("message", "Không tìm thấy thông tin sinh viên yêu cầu.")
+                    final_answer = obs_data.get("message", "Khong tim thay thong tin yeu cau.")
                 else:
                     final_answer = f"Phản hồi từ công cụ: {json.dumps(obs_data, ensure_ascii=False)}"
             
@@ -177,12 +183,12 @@ if __name__ == "__main__":
     print(f"✅ Đã tải thành công {len(tests)} Test Cases thử nghiệm.\n")
     
     if "--interactive" in sys.argv:
-        print("🎮 [INTERACTIVE MODE] Trò chuyện trực tiếp với ReAct Agent:")
-        print("💡 Gợi ý câu hỏi thử nghiệm:")
-        print("   - Câu hỏi chung: 'Quy chế học vụ VinUni yêu cầu bao nhiêu tín chỉ?'")
-        print("   - Tra cứu học vụ: 'Hãy tra cứu thông tin học vụ của sinh viên SV2026001'")
-        print("   - Đặt lịch hẹn: 'Đặt lịch hẹn tư vấn cho SV2026001 vào 14:00 ngày 15/09/2026'")
-        print("   - Gõ 'exit' hoặc 'quit' để kết thúc phiên trò chuyện.\n")
+        print("INTERACTIVE MODE - Tro chuyen voi Library ReAct Agent:")
+        print("Goi y cau hoi:")
+        print("   - Cau hoi chung: 'Thu vien VinUni mo cua may gio?'")
+        print("   - Tra cuu sach: 'Tra cuu sach LIB-001'")
+        print("   - Gia han: 'Gia han sach LIB-002 cho thanh vien MEM-001'")
+        print("   - Go 'exit' de thoat.\n")
         while True:
             try:
                 user_input = input("👤 Sinh viên hỏi: ").strip()

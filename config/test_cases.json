@@ -1,0 +1,37 @@
+[
+  {
+    "id": "TC01",
+    "type": "direct_query",
+    "question": "Thu vien VinUni mo cua may gio va co nhung noi quy gi?",
+    "expected_behavior": "Agent tra loi thang tu kien thuc chung, khong can goi Tool.",
+    "complexity": "Low"
+  },
+  {
+    "id": "TC02",
+    "type": "single_tool_query",
+    "question": "Tra cuu thong tin sach co ma LIB-001.",
+    "expected_behavior": "Agent goi tool search_book voi book_id=LIB-001 va tra ve thong tin sach.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC03",
+    "type": "renew_booking",
+    "question": "Gia han muon sach LIB-002 cho thanh vien MEM-001 them 14 ngay.",
+    "expected_behavior": "Agent goi tool renew_book voi member_id=MEM-001 va book_id=LIB-002.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC04",
+    "type": "multi_step_reasoning",
+    "question": "Tra cuu sach LIB-003 xem ai dang muon va ngay tra la khi nao, sau do gia han them 14 ngay cho thanh vien MEM-002.",
+    "expected_behavior": "Agent tra cuu sach truoc, sau do tao lenh gia han cho MEM-002.",
+    "complexity": "High"
+  },
+  {
+    "id": "TC05",
+    "type": "edge_case_handling",
+    "question": "Tra cuu sach co ma LIB-999.",
+    "expected_behavior": "Agent nhan NOT_FOUND tu Tool va tra loi lich su, khong bia dat du lieu.",
+    "complexity": "Medium"
+  }
+]

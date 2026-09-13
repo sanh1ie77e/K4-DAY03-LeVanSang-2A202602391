@@ -18,9 +18,10 @@ class MCPAcademicServer:
     """
     Giả lập MCP Server tuân thủ chuẩn giao thức Model Context Protocol
     """
-    def __init__(self, server_name: str = "vinuni-academic-mcp-server"):
+    def __init__(self, server_name: str = "vinuni-library-mcp-server"):
         self.server_name = server_name
         self.version = "2026.1.0"
+
         
     def list_tools(self) -> List[Dict[str, Any]]:
         """Trả về danh sách các Tools chuẩn giao thức MCP"""
@@ -32,37 +33,41 @@ class MCPAcademicServer:
         Thực thi request gọi Tool theo chuẩn MCP JSON-RPC
         """
         # --------------------------------------------------------------------------
-        # TODO 2.1: HỌC VIÊN HOÀN THIỆN HÀM GỌI TOOL CHUẨN MCP JSON-RPC
-        # 🎯 YÊU CẦU THỰC THI THUẬT TOÁN:
-        # 1. Gọi hàm dispatch_tool_call(tool_name, arguments) để lấy chuỗi JSON kết quả từ Tool Router.
-        # 2. Chuyển đổi chuỗi JSON kết quả thành Python Dictionary (dùng json.loads).
-        # 3. Đóng gói phản hồi và trả về Dict theo đúng chuẩn giao thức MCP JSON-RPC 2.0:
-        #    - Các trường bắt buộc: "jsonrpc": "2.0", "server": self.server_name, "tool": tool_name, "result": content
-        # --------------------------------------------------------------------------
-        return {}
+        # TODO 2.1: Hoàn thiện hàm gọi Tool chuẩn MCP JSON-RPC 2.0
+        # 1. Gọi dispatch_tool_call() lấy chuỗi JSON kết quả từ Tool Router
+        raw_result = dispatch_tool_call(tool_name, arguments)
+        # 2. Chuyển đổi chuỗi JSON sang Python Dictionary
+        content = json.loads(raw_result)
+        # 3. Đóng gói và trả về phản hồi chuẩn MCP JSON-RPC 2.0
+        return {
+            "jsonrpc": "2.0",
+            "server": self.server_name,
+            "tool": tool_name,
+            "result": content
+        }
 
 
 if __name__ == "__main__":
     print("==========================================================")
-    print("🔌 KIỂM THỬ ĐỘC LẬP MCP SERVER (vinuni-academic-mcp-server)")
+    print("🔌 KIEM THU DOC LAP MCP SERVER (vinuni-library-mcp-server)")
     print("==========================================================")
-    
+
     server = MCPAcademicServer()
     tools = server.list_tools()
-    print(f"✅ Khởi tạo thành công MCP Server: {server.server_name} (Version: {server.version})")
-    print(f"📦 Số lượng Tools công bố: {len(tools)}")
-    
-    # Kiểm tra trạng thái TODO 1.2 (Tool Schema)
-    sched_tool = next((t for t in tools if t.get("name") == "schedule_appointment"), None)
-    if sched_tool and not sched_tool.get("parameters", {}).get("properties"):
-        print("⏳ [TODO 1.2]: Tool 'schedule_appointment' chưa được định nghĩa properties trong 'src/tools.py'.")
-    else:
-        print("✅ [TODO 1.2]: Tool 'schedule_appointment' đã có schema đầy đủ.")
+    print(f"OK Khoi tao thanh cong MCP Server: {server.server_name} (Version: {server.version})")
+    print(f"So luong Tools cong bo: {len(tools)}")
 
-    # Kiểm tra trạng thái TODO 2.1 (call_tool)
-    test_result = server.call_tool("academic_query", {"student_id": "SV2026001"})
-    if not test_result:
-        print("⏳ [TODO 2.1]: Hàm call_tool() đang trả về rỗng. Học viên hãy hoàn thiện TODO 2.1 trong 'src/mcp_server.py'!")
+    renew_tool = next((t for t in tools if t.get("name") == "renew_book"), None)
+    if renew_tool and not renew_tool.get("parameters", {}).get("properties"):
+        print("PENDING [TODO 1.2]: Tool 'renew_book' chua duoc dinh nghia properties.")
     else:
-        print(f"✅ [TODO 2.1]: Test dispatch tool 'academic_query' thành công:")
-        print(f"   Phản hồi JSON-RPC: {json.dumps(test_result, ensure_ascii=False)}")
+        print("OK [TODO 1.2]: Tool 'renew_book' da co schema day du.")
+
+    test_result = server.call_tool("search_book", {"book_id": "LIB-001"})
+    if not test_result:
+        print("PENDING [TODO 2.1]: Ham call_tool() dang tra ve rong!")
+    else:
+        print(f"OK [TODO 2.1]: Test dispatch tool 'search_book' thanh cong:")
+        print(f"   Phan hoi JSON-RPC: {json.dumps(test_result, ensure_ascii=False)}")
+
+
