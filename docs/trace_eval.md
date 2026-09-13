@@ -13,8 +13,8 @@
 | **1. Multi-step Reasoning** | 4 / 5 | Hệ thống cần suy luận chuỗi hành động: Tra cứu sách trước (search_book) rồi mới quyết định gia hạn hay không (renew_book). |
 | **2. Tool Interaction** | 5 / 5 | Giao tiếp 2 chiều với MCP Server (vinuni-library-mcp-server) qua JSON-RPC 2.0 để query DB sách. |
 | **3. Dynamic Decision** | 4 / 5 | Kết quả trả về (NOT_FOUND, ERROR, SUCCESS) quyết định câu trả lời Final Answer tiếp theo của Agent. |
-| **4. Long Horizon Goal** | 3 / 5 | Có khả năng duy trì mục tiêu xử lý các thao tác phức tạp từ người dùng qua nhiều lượt tool calls. |
-| **TỔNG ĐIỂM AGENTIC FIT** | **16 / 20** | *Đề tài cực kỳ phù hợp để áp dụng kiến trúc ReAct Agent thay vì Chatbot truyền thống.* |
+| **4. Long Horizon Goal** | 5 / 5 | Có khả năng duy trì mục tiêu xử lý các thao tác phức tạp từ người dùng qua nhiều lượt tool calls. |
+| **TỔNG ĐIỂM AGENTIC FIT** | **18 / 20** | *Đề tài cực kỳ phù hợp để áp dụng kiến trúc ReAct Agent thay vì Chatbot truyền thống.* |
 
 ---
 
